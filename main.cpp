@@ -2,9 +2,12 @@
 #include <iostream>
 #include <vector>
 #include <thread>
+#include <mutex>
 #include <algorithm>
 
 using namespace std;
+
+mutex cout_mtx;
 
 void populate_nums(vector<long long> &vec, size_t N)
 {
@@ -19,7 +22,10 @@ void sum_thread(const vector<long long> &data, size_t a, size_t b, long long *an
     for (size_t i = a; i < b; ++i) {
 	tmp += data[i];
     }
-    cout <<"a="<<a<<" b="<<b<<" ans="<<tmp<<endl;
+    std::thread::id this_id = std::this_thread::get_id();
+    cout_mtx.lock();
+    cout <<"thread id="<<this_id << " a="<<a<<" b="<<b<<" ans="<<tmp<<endl;
+    cout_mtx.unlock();
     *ans = tmp;
 }
 
